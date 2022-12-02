@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('clone scm') {
+            steps {
+                echo 'clone project from git'
+               git branch: 'main', credentialsId: '8b00904a-4e90-4e56-bdf8-4a70a1b2a614', url: 'https://github.com/vinodkati/kvk.git'
+            }
+        }
+
+      stage('bulid artifact') {
+            steps {
+                echo 'buliding from maven tool'
+                sh 'mvn clean install'
+}
+        }
+     stage('deploy to tomcat server') {
+            steps {
+                echo 'tomcat'
+            deploy adapters: [tomcat9(credentialsId: '054d843b-b570-4360-a3a6-815a9cb7df36', path: '', url: 'http://10.81.0.0/16')], contextPath: 'fb', war: '**/*.war'
+            }
+        }
+    }
+}
